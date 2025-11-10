@@ -33,8 +33,6 @@ ng serve
 
 Hosted on DigitalOcean with NGINX serving the frontend on port 80 and proxying API requests to the FastAPI backend on port 3000.
 
-See `design_doc.md` for detailed architecture and deployment configuration.
-
 ## License
 
 MIT
