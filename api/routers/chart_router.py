@@ -12,7 +12,7 @@ from api.services.chart_service import ChartService
 router = APIRouter(prefix="/charts", tags=["Charts"])
 
 
-@router.post("", response_model=ChartResponse, status_code=201)
+@router.post("", status_code=201)
 async def create_chart(
     chart_data: ChartCreate,
     current_user: UserResponse = Depends(get_current_user),
@@ -30,7 +30,7 @@ async def create_chart(
     return await chart_service.create_chart(chart_data, current_user.id)
 
 
-@router.get("", response_model=list[ChartResponse])
+@router.get("")
 async def list_charts(
     owner_id: str | None = Query(None, description="Filter by owner ID"),
     skip: int = Query(0, ge=0, description="Number of items to skip"),
@@ -45,7 +45,7 @@ async def list_charts(
     return await chart_service.list_charts(owner_id, skip, limit)
 
 
-@router.get("/{chart_id}", response_model=ChartResponse)
+@router.get("/{chart_id}")
 async def get_chart(
     chart_id: str,
     chart_service: ChartService = Depends(get_chart_service),
@@ -58,7 +58,7 @@ async def get_chart(
     return await chart_service.get_chart(chart_id)
 
 
-@router.post("/{chart_id}/refresh", response_model=ChartResponse)
+@router.post("/{chart_id}/refresh")
 async def refresh_chart(
     chart_id: str,
     current_user: UserResponse = Depends(get_current_user),

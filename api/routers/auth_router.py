@@ -11,7 +11,7 @@ from api.services.auth_service import AuthService
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
-@router.post("/register", response_model=UserResponse, status_code=201)
+@router.post("/register", status_code=201)
 async def register(
     user_data: UserCreate,
     auth_service: AuthService = Depends(get_auth_service),
@@ -26,7 +26,7 @@ async def register(
     return await auth_service.register(user_data)
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login")
 async def login(
     credentials: UserLogin,
     auth_service: AuthService = Depends(get_auth_service),
@@ -40,7 +40,7 @@ async def login(
     return await auth_service.login(credentials.email, credentials.password)
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me")
 async def get_current_user_info(
     current_user: UserResponse = Depends(get_current_user),
 ) -> UserResponse:

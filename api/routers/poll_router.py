@@ -18,7 +18,7 @@ from api.services.poll_service import PollService
 router = APIRouter(prefix="/polls", tags=["Polls"])
 
 
-@router.post("", response_model=PollResponse, status_code=201)
+@router.post("", status_code=201)
 async def create_poll(
     poll_data: PollCreate,
     current_user: UserResponse = Depends(get_current_user),
@@ -37,7 +37,7 @@ async def create_poll(
     return await poll_service.create_poll(poll_data, current_user.id)
 
 
-@router.get("/{poll_id}", response_model=PollResponse)
+@router.get("/{poll_id}")
 async def get_poll(
     poll_id: str,
     poll_service: PollService = Depends(get_poll_service),
@@ -50,7 +50,7 @@ async def get_poll(
     return await poll_service.get_poll(poll_id)
 
 
-@router.post("/{poll_id}/open", response_model=PollResponse)
+@router.post("/{poll_id}/open")
 async def open_poll(
     poll_id: str,
     current_user: UserResponse = Depends(get_current_user),
@@ -64,7 +64,7 @@ async def open_poll(
     return await poll_service.open_poll(poll_id, current_user.id)
 
 
-@router.post("/{poll_id}/close", response_model=PollResponse)
+@router.post("/{poll_id}/close")
 async def close_poll(
     poll_id: str,
     current_user: UserResponse = Depends(get_current_user),
@@ -78,7 +78,7 @@ async def close_poll(
     return await poll_service.close_poll(poll_id, current_user.id)
 
 
-@router.post("/{poll_id}/vote", response_model=VoteResponse, status_code=201)
+@router.post("/{poll_id}/vote", status_code=201)
 async def submit_vote(
     poll_id: str,
     vote_data: VoteCreate,
@@ -98,7 +98,7 @@ async def submit_vote(
     return await poll_service.submit_vote(vote_data, current_user.id)
 
 
-@router.get("/{poll_id}/results", response_model=PollResults)
+@router.get("/{poll_id}/results")
 async def get_results(
     poll_id: str,
     poll_service: PollService = Depends(get_poll_service),
