@@ -34,10 +34,10 @@ async def login(
     """
     Authenticate and receive a JWT access token.
 
-    - **email**: Registered email address
+    - **identifier**: Email or username
     - **password**: Account password
     """
-    return await auth_service.login(credentials.email, credentials.password)
+    return await auth_service.login(credentials.identifier, credentials.password)
 
 
 @router.get("/me")

@@ -67,12 +67,12 @@ class AuthService:
             is_active=created_user.is_active,
         )
 
-    async def login(self, email: str, password: str) -> Token:
+    async def login(self, identifier: str, password: str) -> Token:
         """
         Authenticate a user and return a JWT token.
 
         Args:
-            email: The user's email.
+            identifier: The user's email or username.
             password: The user's password.
 
         Returns:
@@ -81,12 +81,15 @@ class AuthService:
         Raises:
             HTTPException: If credentials are invalid.
         """
-        user = await self.user_repository.get_by_email(email)
+        # Try email first, then username
+        user = await self.user_repository.get_by_email(identifier)
+        if not user:
+            user = await self.user_repository.get_by_username(identifier)
 
         if not user or not verify_password(password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid email or password",
+                detail="Invalid credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 

@@ -20,7 +20,7 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     """Schema for user login request."""
 
-    email: EmailStr
+    identifier: str = Field(..., description="Email or username")
     password: str
 
 
