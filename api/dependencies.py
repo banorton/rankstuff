@@ -9,11 +9,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from core.database import get_database
 from core.security import verify_token
 from models.auth import UserResponse
-from repositories.chart_repository import ChartRepository
 from repositories.poll_repository import PollRepository
 from repositories.user_repository import UserRepository
 from services.auth_service import AuthService
-from services.chart_service import ChartService
 from services.poll_service import PollService
 
 # Security scheme for JWT bearer token
@@ -37,13 +35,6 @@ async def get_poll_repository(
     return PollRepository(database)
 
 
-async def get_chart_repository(
-    database: AsyncIOMotorDatabase = Depends(get_database),
-) -> ChartRepository:
-    """Get the chart repository instance."""
-    return ChartRepository(database)
-
-
 # --- Service Dependencies ---
 
 
@@ -59,14 +50,6 @@ async def get_poll_service(
 ) -> PollService:
     """Get the poll service instance."""
     return PollService(poll_repository)
-
-
-async def get_chart_service(
-    chart_repository: ChartRepository = Depends(get_chart_repository),
-    poll_repository: PollRepository = Depends(get_poll_repository),
-) -> ChartService:
-    """Get the chart service instance."""
-    return ChartService(chart_repository, poll_repository)
 
 
 # --- Authentication Dependencies ---

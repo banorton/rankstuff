@@ -1,87 +1,44 @@
 """
-Chart router - API endpoints for aggregated rankings.
+Chart router - API endpoints for visualization data.
 """
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 
-from dependencies import get_chart_service, get_current_user
+from dependencies import get_current_user
 from models.auth import UserResponse
-from models.charts import ChartCreate, ChartResponse
+from models.charts import AlgorithmComparisonChart, VoteDistributionChart
 from services.chart_service import ChartService
 
 router = APIRouter(prefix="/charts", tags=["Charts"])
 
 
-@router.post("", status_code=201)
-async def create_chart(
-    chart_data: ChartCreate,
+def get_chart_service() -> ChartService:
+    """Dependency to get chart service."""
+    return ChartService()
+
+
+@router.get("/algorithm-comparison")
+async def get_algorithm_comparison(
     current_user: UserResponse = Depends(get_current_user),
     chart_service: ChartService = Depends(get_chart_service),
-) -> ChartResponse:
+) -> AlgorithmComparisonChart:
     """
-    Create a new chart from poll results.
+    Get algorithm comparison chart data.
 
-    A chart aggregates results from one or more polls into a combined ranking.
-
-    - **title**: Chart title (1-200 characters)
-    - **description**: Optional description
-    - **poll_ids**: List of poll IDs to aggregate
+    Shows how the same votes produce different winners under
+    Plurality, Borda Count, and Instant Runoff Voting.
     """
-    return await chart_service.create_chart(chart_data, current_user.id)
+    return chart_service.get_algorithm_comparison()
 
 
-@router.get("")
-async def list_charts(
-    owner_id: str | None = Query(None, description="Filter by owner ID"),
-    skip: int = Query(0, ge=0, description="Number of items to skip"),
-    limit: int = Query(100, ge=1, le=100, description="Maximum items to return"),
-    chart_service: ChartService = Depends(get_chart_service),
-) -> list[ChartResponse]:
-    """
-    List charts with optional filtering.
-
-    Supports pagination and filtering by owner.
-    """
-    return await chart_service.list_charts(owner_id, skip, limit)
-
-
-@router.get("/{chart_id}")
-async def get_chart(
-    chart_id: str,
-    chart_service: ChartService = Depends(get_chart_service),
-) -> ChartResponse:
-    """
-    Get a chart by its ID.
-
-    Returns the chart with its current ranked entries.
-    """
-    return await chart_service.get_chart(chart_id)
-
-
-@router.post("/{chart_id}/refresh")
-async def refresh_chart(
-    chart_id: str,
+@router.get("/vote-distribution")
+async def get_vote_distribution(
     current_user: UserResponse = Depends(get_current_user),
     chart_service: ChartService = Depends(get_chart_service),
-) -> ChartResponse:
+) -> VoteDistributionChart:
     """
-    Refresh a chart's entries from current poll results.
+    Get vote distribution chart data.
 
-    Recalculates rankings based on the latest poll data.
-    Only the chart owner can refresh a chart.
+    Shows how voters distributed their rankings across options.
     """
-    return await chart_service.refresh_chart(chart_id, current_user.id)
-
-
-@router.delete("/{chart_id}", status_code=204)
-async def delete_chart(
-    chart_id: str,
-    current_user: UserResponse = Depends(get_current_user),
-    chart_service: ChartService = Depends(get_chart_service),
-) -> None:
-    """
-    Delete a chart.
-
-    Only the chart owner can delete a chart.
-    """
-    await chart_service.delete_chart(chart_id, current_user.id)
+    return chart_service.get_vote_distribution()

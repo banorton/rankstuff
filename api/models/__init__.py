@@ -21,10 +21,8 @@ from .polls import (
     PollResults,
 )
 from .charts import (
-    ChartCreate,
-    ChartResponse,
-    ChartInDB,
-    ChartEntry,
+    AlgorithmComparisonChart,
+    VoteDistributionChart,
 )
 
 __all__ = [
@@ -45,8 +43,6 @@ __all__ = [
     "VoteInDB",
     "PollResults",
     # Charts
-    "ChartCreate",
-    "ChartResponse",
-    "ChartInDB",
-    "ChartEntry",
+    "AlgorithmComparisonChart",
+    "VoteDistributionChart",
 ]
