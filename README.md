@@ -1,38 +1,13 @@
 # RankStuff
 
-A web app for group decision-making through ranked voting.
-
-## What It Does
-
-Create polls, share a link, and let people rank options in order of preference. Results are aggregated using the Borda Count algorithm.
-
-## Tech Stack
-
-- **Frontend**: Angular
-- **Backend**: FastAPI (Python)
-- **Database**: MongoDB
-- **Server**: NGINX on DigitalOcean
+Ranked voting polls using Borda count.
 
 ## Running Locally
 
-### Backend
 ```bash
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload --port 3000
+cd api
+cp .env.example .env  # configure MongoDB URL and JWT secret
+uv run uvicorn main:app --reload
 ```
 
-### Frontend
-```bash
-cd frontend
-npm install
-ng serve
-```
-
-## Deployment
-
-Hosted on DigitalOcean with NGINX serving the frontend on port 80 and proxying API requests to the FastAPI backend on port 3000.
-
-## License
-
-MIT
+API docs: http://localhost:8000/docs
