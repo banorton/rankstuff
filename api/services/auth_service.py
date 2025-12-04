@@ -4,9 +4,9 @@ Authentication service - Business logic for user auth.
 
 from fastapi import HTTPException, status
 
-from api.core.security import create_access_token, hash_password, verify_password
-from api.models.auth import Token, UserCreate, UserInDB, UserResponse
-from api.repositories.user_repository import UserRepository
+from core.security import create_access_token, hash_password, verify_password
+from models.auth import Token, UserCreate, UserInDB, UserResponse
+from repositories.user_repository import UserRepository
 
 
 class AuthService:

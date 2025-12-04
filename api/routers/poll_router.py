@@ -4,16 +4,16 @@ Poll router - API endpoints for polls and voting.
 
 from fastapi import APIRouter, Depends
 
-from api.dependencies import get_current_user, get_poll_service
-from api.models.auth import UserResponse
-from api.models.polls import (
+from dependencies import get_current_user, get_poll_service
+from models.auth import UserResponse
+from models.polls import (
     PollCreate,
     PollResponse,
     PollResults,
     VoteCreate,
     VoteResponse,
 )
-from api.services.poll_service import PollService
+from services.poll_service import PollService
 
 router = APIRouter(prefix="/polls", tags=["Polls"])
 

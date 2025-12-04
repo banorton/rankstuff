@@ -6,9 +6,9 @@ from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 
-from api.models.charts import ChartCreate, ChartEntry, ChartInDB, ChartResponse
-from api.repositories.chart_repository import ChartRepository
-from api.repositories.poll_repository import PollRepository
+from models.charts import ChartCreate, ChartEntry, ChartInDB, ChartResponse
+from repositories.chart_repository import ChartRepository
+from repositories.poll_repository import PollRepository
 
 
 class ChartService:

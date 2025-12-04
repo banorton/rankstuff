@@ -4,9 +4,9 @@ Authentication router - API endpoints for auth.
 
 from fastapi import APIRouter, Depends
 
-from api.dependencies import get_auth_service, get_current_user
-from api.models.auth import Token, UserCreate, UserLogin, UserResponse
-from api.services.auth_service import AuthService
+from dependencies import get_auth_service, get_current_user
+from models.auth import Token, UserCreate, UserLogin, UserResponse
+from services.auth_service import AuthService
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 

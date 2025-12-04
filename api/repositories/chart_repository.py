@@ -2,9 +2,11 @@
 Repository for chart data access.
 """
 
+from __future__ import annotations
+
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from api.models.charts import ChartInDB
+from models.charts import ChartInDB
 
 from .base import BaseRepository
 

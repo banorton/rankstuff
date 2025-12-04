@@ -2,10 +2,12 @@
 Repository for user data access.
 """
 
+from __future__ import annotations
+
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from api.models.auth import UserInDB
+from models.auth import UserInDB
 
 from .base import BaseRepository
 

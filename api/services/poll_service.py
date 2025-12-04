@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 
-from api.models.polls import (
+from models.polls import (
     OptionResult,
     PollCreate,
     PollInDB,
@@ -17,7 +17,7 @@ from api.models.polls import (
     VoteInDB,
     VoteResponse,
 )
-from api.repositories.poll_repository import PollRepository
+from repositories.poll_repository import PollRepository
 
 
 class PollService:

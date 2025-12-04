@@ -1,7 +1,7 @@
 """
 FastAPI application entry point for rankstuff.io.
 
-Run with: uvicorn api.main:app --reload
+Run with: cd api && uv run uvicorn main:app --reload
 """
 
 from contextlib import asynccontextmanager
@@ -9,9 +9,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.core.config import settings
-from api.core.database import close_database_connection, connect_to_database
-from api.routers import auth_router, chart_router, poll_router
+from core.config import settings
+from core.database import close_database_connection, connect_to_database
+from routers import auth_router, chart_router, poll_router
 
 
 @asynccontextmanager

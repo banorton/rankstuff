@@ -6,15 +6,15 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from api.core.database import get_database
-from api.core.security import verify_token
-from api.models.auth import UserResponse
-from api.repositories.chart_repository import ChartRepository
-from api.repositories.poll_repository import PollRepository
-from api.repositories.user_repository import UserRepository
-from api.services.auth_service import AuthService
-from api.services.chart_service import ChartService
-from api.services.poll_service import PollService
+from core.database import get_database
+from core.security import verify_token
+from models.auth import UserResponse
+from repositories.chart_repository import ChartRepository
+from repositories.poll_repository import PollRepository
+from repositories.user_repository import UserRepository
+from services.auth_service import AuthService
+from services.chart_service import ChartService
+from services.poll_service import PollService
 
 # Security scheme for JWT bearer token
 security = HTTPBearer()

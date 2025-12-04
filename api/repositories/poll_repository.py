@@ -2,9 +2,11 @@
 Repository for poll and vote data access.
 """
 
+from __future__ import annotations
+
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from api.models.polls import PollInDB, PollStatus, VoteInDB
+from models.polls import PollInDB, PollStatus, VoteInDB
 
 from .base import BaseRepository
 

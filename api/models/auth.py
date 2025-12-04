@@ -58,8 +58,8 @@ class TokenPayload(BaseModel):
 class UserInDB(BaseModel):
     """Schema for user document stored in MongoDB."""
 
-    id: str = Field(default=None, alias="_id")
-   email: EmailStr
+    id: str | None = Field(default=None)
+    email: EmailStr
     username: str
     hashed_password: str
     created_at: datetime = Field(default_factory=datetime.utcnow)

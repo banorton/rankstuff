@@ -4,10 +4,10 @@ Chart router - API endpoints for aggregated rankings.
 
 from fastapi import APIRouter, Depends, Query
 
-from api.dependencies import get_chart_service, get_current_user
-from api.models.auth import UserResponse
-from api.models.charts import ChartCreate, ChartResponse
-from api.services.chart_service import ChartService
+from dependencies import get_chart_service, get_current_user
+from models.auth import UserResponse
+from models.charts import ChartCreate, ChartResponse
+from services.chart_service import ChartService
 
 router = APIRouter(prefix="/charts", tags=["Charts"])
 
