@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 interface LoginResponse {
   access_token: string;
@@ -10,7 +11,7 @@ interface LoginResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
   private tokenKey = 'access_token';
 
   constructor(private http: HttpClient, private router: Router) {}

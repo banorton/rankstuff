@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 export interface AlgorithmScore {
   algorithm: string;
@@ -32,7 +33,7 @@ export interface VoteDistributionChart {
 
 @Injectable({ providedIn: 'root' })
 export class ChartService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
