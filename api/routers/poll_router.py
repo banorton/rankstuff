@@ -18,6 +18,19 @@ from services.poll_service import PollService
 router = APIRouter(prefix="/polls", tags=["Polls"])
 
 
+@router.get("")
+async def list_polls(
+    current_user: UserResponse = Depends(get_current_user),
+    poll_service: PollService = Depends(get_poll_service),
+) -> list[PollResponse]:
+    """
+    List all polls for the current user.
+
+    Returns polls owned by or voted on by the current user.
+    """
+    return await poll_service.list_user_polls(current_user.id)
+
+
 @router.post("", status_code=201)
 async def create_poll(
     poll_data: PollCreate,
@@ -98,14 +111,29 @@ async def submit_vote(
     return await poll_service.submit_vote(vote_data, current_user.id)
 
 
+@router.get("/{poll_id}/voted")
+async def check_voted(
+    poll_id: str,
+    current_user: UserResponse = Depends(get_current_user),
+    poll_service: PollService = Depends(get_poll_service),
+) -> dict:
+    """
+    Check if the current user has voted on a poll.
+    """
+    has_voted = await poll_service.has_user_voted(poll_id, current_user.id)
+    return {"has_voted": has_voted}
+
+
 @router.get("/{poll_id}/results")
 async def get_results(
     poll_id: str,
+    current_user: UserResponse = Depends(get_current_user),
     poll_service: PollService = Depends(get_poll_service),
 ) -> PollResults:
     """
     Get the poll results calculated using Borda count.
 
     Results show each option's score and final ranking.
+    Only the poll owner can see results while poll is open.
     """
-    return await poll_service.get_results(poll_id)
+    return await poll_service.get_results(poll_id, current_user.id)

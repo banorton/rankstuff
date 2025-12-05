@@ -131,3 +131,16 @@ class AuthService:
             created_at=user.created_at,
             is_active=user.is_active,
         )
+
+    async def refresh_token(self, user_id: str) -> Token:
+        """
+        Refresh an access token for a user.
+
+        Args:
+            user_id: The user's ID from the current JWT token.
+
+        Returns:
+            A new JWT token.
+        """
+        access_token = create_access_token(data={"sub": user_id})
+        return Token(access_token=access_token)

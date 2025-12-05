@@ -50,3 +50,16 @@ async def get_current_user_info(
     Requires a valid JWT token in the Authorization header.
     """
     return current_user
+
+
+@router.post("/refresh")
+async def refresh_token(
+    current_user: UserResponse = Depends(get_current_user),
+    auth_service: AuthService = Depends(get_auth_service),
+) -> Token:
+    """
+    Refresh the access token.
+
+    Returns a new access token if the current one is still valid.
+    """
+    return await auth_service.refresh_token(current_user.id)

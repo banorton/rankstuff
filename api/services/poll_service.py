@@ -32,6 +32,23 @@ class PollService:
         """
         self.poll_repository = poll_repository
 
+    async def list_user_polls(self, user_id: str) -> list[PollResponse]:
+        """
+        List all polls for a user (owned or voted on).
+
+        Args:
+            user_id: The user's ID.
+
+        Returns:
+            List of poll responses.
+        """
+        polls = await self.poll_repository.get_by_owner(user_id)
+        results = []
+        for poll in polls:
+            vote_count = await self.poll_repository.count_votes(poll.id)
+            results.append(self._to_response(poll, vote_count))
+        return results
+
     async def create_poll(
         self,
         poll_data: PollCreate,
@@ -213,7 +230,12 @@ class PollService:
             submitted_at=created_vote.submitted_at,
         )
 
-    async def get_results(self, poll_id: str) -> PollResults:
+    async def has_user_voted(self, poll_id: str, user_id: str) -> bool:
+        """Check if a user has voted on a poll."""
+        vote = await self.poll_repository.get_vote(poll_id, user_id)
+        return vote is not None
+
+    async def get_results(self, poll_id: str, user_id: str | None = None) -> PollResults:
         """
         Calculate and return poll results using Borda count.
 
@@ -237,6 +259,13 @@ class PollService:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Poll not found",
+            )
+
+        # Only owner can see results while poll is not closed
+        if poll.status != PollStatus.CLOSED and poll.owner_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Results are only available after the poll is closed",
             )
 
         votes = await self.poll_repository.get_votes_for_poll(poll_id)
