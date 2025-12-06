@@ -22,12 +22,7 @@ import { AuthService } from '../services/auth.service';
                    placeholder="What should we vote on?" required />
           </div>
           <div class="form-group">
-            <label for="description">Description (optional)</label>
-            <input id="description" type="text" [(ngModel)]="newPoll.description" name="description"
-                   placeholder="Add more context..." />
-          </div>
-          <div class="form-group">
-            <label>Options (one per line, minimum 2)</label>
+            <label>Options</label>
             <textarea [(ngModel)]="optionsText" name="options" rows="5"
                       placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
           </div>
@@ -46,8 +41,6 @@ import { AuthService } from '../services/auth.service';
           <span>{{ currentPoll.vote_count }} vote{{ currentPoll.vote_count !== 1 ? 's' : '' }}</span>
         </div>
       </div>
-      <p *ngIf="currentPoll.description" class="poll-description">{{ currentPoll.description }}</p>
-
       <!-- Owner Actions -->
       <div class="owner-actions" *ngIf="currentPoll.status === 'draft'">
         <button (click)="openPoll()" class="btn-primary">Open Poll for Voting</button>
@@ -151,7 +144,6 @@ import { AuthService } from '../services/auth.service';
       margin-bottom: 10px;
     }
     .poll-header h1 { margin: 0; }
-    .poll-description { color: #666; margin-bottom: 20px; }
     .poll-meta { display: flex; gap: 10px; color: #666; }
     .status {
       padding: 2px 8px;
@@ -289,7 +281,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class PollsComponent implements OnInit {
   // Create poll
-  newPoll = { title: '', description: '' };
+  newPoll = { title: '' };
   optionsText = '';
   createMessage = '';
 
@@ -334,12 +326,11 @@ export class PollsComponent implements OnInit {
 
     this.pollService.createPoll({
       title: this.newPoll.title,
-      description: this.newPoll.description || undefined,
       options
     }).subscribe({
       next: (poll) => {
         this.createMessage = '';
-        this.newPoll = { title: '', description: '' };
+        this.newPoll = { title: '' };
         this.optionsText = '';
         this.router.navigate(['/poll', poll.id]);
       },
