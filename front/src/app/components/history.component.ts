@@ -79,7 +79,7 @@ export class HistoryComponent implements OnInit {
   }
 
   viewPoll(id: string) {
-    this.router.navigate(['/poll', id]);
+    this.router.navigate(['/manage', id]);
   }
 
   formatDate(dateStr: string): string {

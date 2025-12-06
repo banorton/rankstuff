@@ -346,7 +346,7 @@ export class PollsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Check if we're viewing a specific poll via route param
+    // Check if we're managing a specific poll via route param
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.loadPoll(params['id']);
@@ -376,7 +376,7 @@ export class PollsComponent implements OnInit {
         this.createMessage = '';
         this.newPoll = { title: '' };
         this.optionsText = '';
-        this.router.navigate(['/poll', poll.id]);
+        this.router.navigate(['/manage', poll.id]);
       },
       error: (err) => {
         this.createMessage = 'Error: ' + (err.error?.detail || err.message);

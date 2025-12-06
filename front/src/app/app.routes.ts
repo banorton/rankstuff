@@ -7,9 +7,12 @@ import { SummaryComponent } from './components/summary.component';
 import { ReportsComponent } from './components/reports.component';
 import { PollsComponent } from './components/polls.component';
 import { HistoryComponent } from './components/history.component';
+import { VoteComponent } from './components/vote.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  // Public voting route - no auth required
+  { path: 'poll/:id', component: VoteComponent },
   {
     path: '',
     component: LayoutComponent,
@@ -17,7 +20,7 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'create', pathMatch: 'full' },
       { path: 'create', component: PollsComponent },
-      { path: 'poll/:id', component: PollsComponent },
+      { path: 'manage/:id', component: PollsComponent },
       { path: 'history', component: HistoryComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'summary', component: SummaryComponent },

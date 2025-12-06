@@ -2,9 +2,9 @@
 Poll router - API endpoints for polls and voting.
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
-from dependencies import get_current_user, get_poll_service
+from dependencies import get_current_user, get_current_user_optional, get_poll_service
 from models.auth import UserResponse
 from models.polls import (
     PollCreate,
@@ -95,32 +95,47 @@ async def close_poll(
 async def submit_vote(
     poll_id: str,
     vote_data: VoteCreate,
-    current_user: UserResponse = Depends(get_current_user),
+    request: Request,
+    current_user: UserResponse | None = Depends(get_current_user_optional),
     poll_service: PollService = Depends(get_poll_service),
 ) -> VoteResponse:
     """
     Submit a ranked vote for a poll.
 
     Rank your preferred options from 1 (most preferred) to n.
-    Each user can only vote once per poll.
+    Each user/IP can only vote once per poll.
+    Anonymous voting is allowed - uses IP address for duplicate detection.
 
     - **rankings**: List of option IDs with their ranks
     """
+    # Use user ID if authenticated, otherwise use IP address
+    if current_user:
+        voter_id = current_user.id
+    else:
+        # Use IP address as voter identifier for anonymous votes
+        voter_id = f"anon:{request.client.host}"
+
     # Ensure poll_id in path matches vote data
     vote_data.poll_id = poll_id
-    return await poll_service.submit_vote(vote_data, current_user.id)
+    return await poll_service.submit_vote(vote_data, voter_id)
 
 
 @router.get("/{poll_id}/voted")
 async def check_voted(
     poll_id: str,
-    current_user: UserResponse = Depends(get_current_user),
+    request: Request,
+    current_user: UserResponse | None = Depends(get_current_user_optional),
     poll_service: PollService = Depends(get_poll_service),
 ) -> dict:
     """
-    Check if the current user has voted on a poll.
+    Check if the current user/IP has voted on a poll.
     """
-    has_voted = await poll_service.has_user_voted(poll_id, current_user.id)
+    if current_user:
+        voter_id = current_user.id
+    else:
+        voter_id = f"anon:{request.client.host}"
+
+    has_voted = await poll_service.has_user_voted(poll_id, voter_id)
     return {"has_voted": has_voted}
 
 
