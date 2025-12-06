@@ -60,10 +60,10 @@ export class AuthService {
     this.stopTokenRefresh();
     if (!this.isLoggedIn()) return;
 
-    // Refresh token every 20 minutes (token expires in 30)
+    // Refresh token every 50 minutes (token expires in 60)
     this.refreshInterval = setInterval(() => {
       this.refreshToken();
-    }, 20 * 60 * 1000);
+    }, 50 * 60 * 1000);
   }
 
   private stopTokenRefresh(): void {

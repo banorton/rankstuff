@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # JWT Authentication
     jwt_secret_key: str = "your-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
-    jwt_access_token_expire_minutes: int = 30
+    jwt_access_token_expire_minutes: int = 60
 
     # CORS
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:4200"]
