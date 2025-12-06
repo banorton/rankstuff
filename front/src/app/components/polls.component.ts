@@ -32,8 +32,8 @@ import { AuthService } from '../services/auth.service';
       </section>
     </div>
 
-    <!-- VIEW/VOTE MODE -->
-    <div *ngIf="currentPoll" class="poll-page">
+    <!-- MANAGEMENT VIEW (owner only) -->
+    <div *ngIf="currentPoll && isOwner() && !votingMode" class="poll-page">
       <div class="poll-header">
         <h1>{{ currentPoll.title }}</h1>
         <div class="poll-meta">
@@ -41,9 +41,47 @@ import { AuthService } from '../services/auth.service';
           <span>{{ currentPoll.vote_count }} vote{{ currentPoll.vote_count !== 1 ? 's' : '' }}</span>
         </div>
       </div>
-      <!-- Owner Actions -->
-      <div class="owner-actions" *ngIf="currentPoll.status === 'draft'">
-        <button (click)="openPoll()" class="btn-primary">Open Poll for Voting</button>
+
+      <div class="action-row">
+        <button *ngIf="currentPoll.status === 'draft'" (click)="openPoll()" class="btn-manage">Open Poll</button>
+        <button *ngIf="currentPoll.status === 'open'" (click)="closePoll()" class="btn-manage">Close Poll</button>
+        <button *ngIf="currentPoll.status === 'open' && !hasVoted" (click)="enterVotingMode()" class="btn-primary">Vote</button>
+        <button *ngIf="!pollResults" (click)="loadResults()" class="btn-primary">View Results</button>
+      </div>
+
+      <p *ngIf="hasVoted" class="voted-message">✓ You have voted on this poll</p>
+
+      <!-- Results -->
+      <div *ngIf="pollResults" class="results-section">
+        <h2>Results</h2>
+        <p class="results-meta">{{ pollResults.total_votes }} total vote{{ pollResults.total_votes !== 1 ? 's' : '' }} · Borda Count</p>
+        <div class="results-list">
+          <div *ngFor="let r of pollResults.results" class="result-item">
+            <span class="result-rank">#{{ r.rank }}</span>
+            <span class="result-label">{{ r.label }}</span>
+            <span class="result-score">{{ r.score }} pts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Share Link -->
+      <div class="share-section">
+        <span class="share-label">Share this poll</span>
+        <div class="share-input-wrapper">
+          <input type="text" [value]="getPollUrl()" readonly #shareInput />
+          <button (click)="copyLink(shareInput)" class="copy-btn">{{ copied ? 'Copied!' : 'Copy' }}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOTING VIEW (non-owners, or owner in voting mode) -->
+    <div *ngIf="currentPoll && (!isOwner() || votingMode)" class="poll-page">
+      <div class="poll-header">
+        <h1>{{ currentPoll.title }}</h1>
+        <div class="poll-meta">
+          <span class="status" [class]="currentPoll.status">{{ currentPoll.status }}</span>
+          <span>{{ currentPoll.vote_count }} vote{{ currentPoll.vote_count !== 1 ? 's' : '' }}</span>
+        </div>
       </div>
 
       <!-- Voting (drag and drop) -->
@@ -59,19 +97,19 @@ import { AuthService } from '../services/auth.service';
             </div>
           </div>
         </div>
-        <div class="vote-actions">
+        <div class="action-row">
+          <button *ngIf="isOwner()" (click)="exitVotingMode()" class="btn-primary">Back</button>
           <button (click)="submitVote()" class="btn-primary">Submit Vote</button>
-          <button *ngIf="isOwner()" (click)="closePoll()" class="btn-secondary">Close Poll</button>
         </div>
       </div>
 
       <div *ngIf="hasVoted" class="voted-section">
         <p class="voted-message">✓ You have voted on this poll</p>
-        <button *ngIf="isOwner() && currentPoll.status === 'open'" (click)="closePoll()" class="btn-secondary">Close Poll</button>
+        <button *ngIf="isOwner()" (click)="exitVotingMode()" class="btn-primary">Back to Management</button>
       </div>
       <p *ngIf="voteMessage" class="message">{{ voteMessage }}</p>
 
-      <!-- Results -->
+      <!-- Results (only for closed polls for non-owners) -->
       <div *ngIf="pollResults" class="results-section">
         <h2>Results</h2>
         <p class="results-meta">{{ pollResults.total_votes }} total vote{{ pollResults.total_votes !== 1 ? 's' : '' }} · Borda Count</p>
@@ -84,16 +122,7 @@ import { AuthService } from '../services/auth.service';
         </div>
       </div>
 
-      <button *ngIf="!pollResults && (isOwner() || currentPoll.status === 'closed')" (click)="loadResults()" class="btn-secondary">View Results</button>
-
-      <!-- Share Link -->
-      <div class="share-section">
-        <span class="share-label">Share this poll</span>
-        <div class="share-input-wrapper">
-          <input type="text" [value]="getPollUrl()" readonly #shareInput />
-          <button (click)="copyLink(shareInput)" class="copy-btn">{{ copied ? 'Copied!' : 'Copy' }}</button>
-        </div>
-      </div>
+      <button *ngIf="!pollResults && currentPoll.status === 'closed'" (click)="loadResults()" class="btn-primary">View Results</button>
     </div>
   `,
   styles: [`
@@ -136,6 +165,23 @@ import { AuthService } from '../services/auth.service';
 
     .message { color: #28a745; margin-top: 15px; }
 
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .btn-manage {
+      background: #ffc107;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-manage:hover { background: #e0a800; }
+
     .poll-page { max-width: 600px; }
     .poll-header {
       display: flex;
@@ -155,10 +201,7 @@ import { AuthService } from '../services/auth.service';
     .status.open { background: #28a745; color: #fff; }
     .status.closed { background: #6c757d; color: #fff; }
 
-    .owner-actions { margin: 20px 0; }
-
     .vote-section { margin: 20px 0; }
-    .vote-actions { display: flex; gap: 10px; }
 
     .rank-list {
       border: 1px solid #ddd;
@@ -285,6 +328,9 @@ export class PollsComponent implements OnInit {
   optionsText = '';
   createMessage = '';
 
+  // View mode
+  votingMode = false;
+
   
   // View/vote poll
   currentPoll: Poll | null = null;
@@ -344,6 +390,7 @@ export class PollsComponent implements OnInit {
     this.pollResults = null;
     this.hasVoted = false;
     this.voteMessage = '';
+    this.votingMode = false;
 
     this.pollService.getPoll(id).subscribe({
       next: (poll) => {
@@ -411,6 +458,10 @@ export class PollsComponent implements OnInit {
         this.pollService.getPoll(this.currentPoll!.id).subscribe({
           next: (poll) => this.currentPoll = poll
         });
+        // Return owner to management view after voting
+        if (this.isOwner()) {
+          this.votingMode = false;
+        }
       },
       error: (err) => {
         if (err.error?.detail?.includes('already voted')) {
@@ -428,6 +479,14 @@ export class PollsComponent implements OnInit {
       next: (results) => this.pollResults = results,
       error: (err) => alert('Error: ' + (err.error?.detail || err.message))
     });
+  }
+
+  enterVotingMode() {
+    this.votingMode = true;
+  }
+
+  exitVotingMode() {
+    this.votingMode = false;
   }
 
   getPollUrl(): string {
