@@ -402,6 +402,10 @@ export class PollsComponent implements OnInit {
             next: (res) => this.hasVoted = res.has_voted
           });
         }
+        // Auto-load results for closed polls
+        if (poll.status === 'closed') {
+          this.loadResults();
+        }
       },
       error: () => {
         alert('Poll not found');
@@ -421,7 +425,10 @@ export class PollsComponent implements OnInit {
   closePoll() {
     if (!this.currentPoll) return;
     this.pollService.closePoll(this.currentPoll.id).subscribe({
-      next: (poll) => this.currentPoll = poll,
+      next: (poll) => {
+        this.currentPoll = poll;
+        this.loadResults();
+      },
       error: (err) => alert('Error: ' + (err.error?.detail || err.message))
     });
   }
