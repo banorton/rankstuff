@@ -68,9 +68,12 @@ export class PollService {
 
   private getHeaders(): HttpHeaders {
     const token = this.auth.getToken();
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
+    if (token) {
+      return new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+    }
+    return new HttpHeaders();
   }
 
   listPolls(): Observable<Poll[]> {
