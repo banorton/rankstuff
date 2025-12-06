@@ -103,14 +103,14 @@ import { AuthService } from '../services/auth.service';
         </div>
       </div>
 
-      <div *ngIf="hasVoted" class="voted-section">
+      <div *ngIf="hasVoted && currentPoll.status === 'open'" class="voted-section">
         <p class="voted-message">✓ You have voted on this poll</p>
         <button *ngIf="isOwner()" (click)="exitVotingMode()" class="btn-primary">Back to Management</button>
       </div>
       <p *ngIf="voteMessage" class="message">{{ voteMessage }}</p>
 
-      <!-- Results (only for closed polls for non-owners) -->
-      <div *ngIf="pollResults" class="results-section">
+      <!-- Results for non-owners when poll is closed -->
+      <div *ngIf="currentPoll.status === 'closed' && pollResults" class="results-section">
         <h2>Results</h2>
         <p class="results-meta">{{ pollResults.total_votes }} total vote{{ pollResults.total_votes !== 1 ? 's' : '' }} · Borda Count</p>
         <div class="results-list">
@@ -121,8 +121,6 @@ import { AuthService } from '../services/auth.service';
           </div>
         </div>
       </div>
-
-      <button *ngIf="!pollResults && currentPoll.status === 'closed'" (click)="loadResults()" class="btn-primary">View Results</button>
     </div>
   `,
   styles: [`

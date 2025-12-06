@@ -3,6 +3,9 @@ CLAUDE.md
 PROGRESS.md
 .claude/
 
+# Deploy docs (contains server-specific info)
+DEPLOY.md
+
 # Python
 __pycache__/
 *.py[cod]

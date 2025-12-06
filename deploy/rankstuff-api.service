@@ -1,0 +1,14 @@
+[Unit]
+Description=Rankstuff FastAPI Backend
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/rankstuff/api
+Environment="PATH=/var/www/rankstuff/api/.venv/bin"
+ExecStart=/var/www/rankstuff/api/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 3000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

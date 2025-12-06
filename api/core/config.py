@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     jwt_access_token_expire_minutes: int = 60
 
     # CORS
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:4200"]
+    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:4200", "https://rankstuff.io"]
 
     class Config:
         env_file = ".env"
